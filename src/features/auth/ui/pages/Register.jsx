@@ -1,11 +1,32 @@
 import React from "react";
-import { useForm } from "react-hook-form";
 import { User, Mail, Lock, Sparkles, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const Register = () => {
-  let { register, handleSubmit, onRegisterSubmit, errors, navigate } =
+  let { register, handleSubmit, onRegisterSubmit, errors, navigate, watch } =
     useAuth();
+
+  const passwordVal = watch("password", "");
+
+  const getPasswordStrength = (pass) => {
+    if (!pass) return { score: 0, label: "", colorClass: "text-gray-500", barColor: "bg-white/10" };
+    
+    let score = 0;
+    if (pass.length >= 6) score++;
+    if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
+    if (/\d/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    
+    if (score <= 1) {
+      return { score, label: "Weak password", colorClass: "text-red-400", barColor: "bg-red-500" };
+    } else if (score <= 3) {
+      return { score, label: "Medium password", colorClass: "text-amber-400", barColor: "bg-amber-400" };
+    } else {
+      return { score, label: "Strong password", colorClass: "text-purple-300", barColor: "bg-purple-400" };
+    }
+  };
+
+  const strength = getPasswordStrength(passwordVal);
 
   return (
     <div className="min-h-screen bg-[#09070F] text-white flex flex-col">
@@ -153,13 +174,15 @@ const Register = () => {
 
                 {/* Password Strength */}
                 <div className="flex gap-2 mt-4">
-                  <div className="h-1 flex-1 rounded-full bg-purple-400"></div>
-                  <div className="h-1 flex-1 rounded-full bg-purple-400"></div>
-                  <div className="h-1 flex-1 rounded-full bg-white/10"></div>
-                  <div className="h-1 flex-1 rounded-full bg-white/10"></div>
+                  <div className={`h-1 flex-1 rounded-full ${strength.score >= 1 ? strength.barColor : "bg-white/10"}`}></div>
+                  <div className={`h-1 flex-1 rounded-full ${strength.score >= 2 ? strength.barColor : "bg-white/10"}`}></div>
+                  <div className={`h-1 flex-1 rounded-full ${strength.score >= 3 ? strength.barColor : "bg-white/10"}`}></div>
+                  <div className={`h-1 flex-1 rounded-full ${strength.score >= 4 ? strength.barColor : "bg-white/10"}`}></div>
                 </div>
 
-                <p className="text-sm text-purple-300 mt-2">Strong password</p>
+                {strength.label && (
+                  <p className={`text-sm mt-2 ${strength.colorClass}`}>{strength.label}</p>
+                )}
 
                 {errors.password && (
                   <p className="text-red-400 text-sm mt-2">
