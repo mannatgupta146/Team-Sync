@@ -4,7 +4,7 @@ import { axiosInstance } from "../../../../config/axiosInstance";
 export const loginEmployee = createAsyncThunk("auth/login", async({credentials, thunkApi}) => {
     try {
         const res = await axiosInstance.post("/auth/login", credentials)
-        return res.data
+        return res.data.data
     } catch (error) {
         return thunkApi.rejectWithValue(error)
     }
