@@ -10,6 +10,8 @@ import { currentLoggedEmployee } from '../../features/auth/state/auth/authAction
 import Public from '../layouts/protectedRoutes/Public'
 import Protected from '../layouts/protectedRoutes/Protected'
 import { commonRoutes } from './commonRoutes'
+import { adminRoutes } from './adminRoutes'
+import { employeeRoutes } from './employeeRoutes'
 
 const router = createBrowserRouter([
     {
@@ -45,7 +47,11 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: <DashboardLayout />,
-                children: commonRoutes
+                children: [
+                    ...commonRoutes,
+                    ...adminRoutes,
+                    ...employeeRoutes
+                ]
             }
         ]
     }
