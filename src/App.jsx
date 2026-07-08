@@ -1,8 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AppRoutes from './app/routes/AppRoutes'
 import { Toaster } from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 
 const App = () => {
+  const { mode } = useSelector((state) => state.theme)
+
+  useEffect(() => {
+    if (mode === "light") {
+      document.body.classList.add("light")
+    } else {
+      document.body.classList.remove("light")
+    }
+  }, [mode])
+
   return (
     <>
       <Toaster
