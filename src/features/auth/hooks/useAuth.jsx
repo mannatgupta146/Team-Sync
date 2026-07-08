@@ -24,7 +24,7 @@ export let useAuth = () => {
       await dispatch(registerEmployee(data)).unwrap();
       toast.success("Account created successfully!", { id: "auth-toast" });
       reset();
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Registration failed:", error);
       toast.error(error || "Registration failed. Please try again.", { id: "auth-toast" });
@@ -40,7 +40,7 @@ export let useAuth = () => {
       await dispatch(loginEmployee(data)).unwrap();
       toast.success("Welcome back!", { id: "auth-toast" });
       reset();
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(error || "Login failed. Please try again.", { id: "auth-toast" });
