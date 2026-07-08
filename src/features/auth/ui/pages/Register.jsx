@@ -242,39 +242,7 @@ const Register = () => {
                 )}
               </button>
 
-              {/* Divider */}
-              <div className="flex items-center gap-4 py-2">
-                <div className="h-px flex-1 bg-white/10"></div>
 
-                <p className="text-sm text-gray-500">OR CONTINUE WITH</p>
-
-                <div className="h-px flex-1 bg-white/10"></div>
-              </div>
-
-              {/* Social Buttons */}
-              <div className="grid grid-cols-2 gap-5">
-                <button
-                  type="button"
-                  className="h-16 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition flex items-center justify-center gap-3"
-                >
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
-                    alt="google"
-                    className="w-5 h-5"
-                  />
-
-                  <span className="text-lg">Google</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="h-16 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition flex items-center justify-center gap-3"
-                >
-                  <ShieldCheck size={20} />
-
-                  <span className="text-lg">SSO</span>
-                </button>
-              </div>
 
               {/* Login */}
               <p className="text-center text-gray-400 pt-8 text-lg">
