@@ -226,7 +226,7 @@ const Login = () => {
           <p className="hover:text-white cursor-pointer">System Status</p>
         </div>
 
-        <p>© 2024 team-sync. Enterprise Intelligence Platforms.</p>
+        <p>© 2026 team-sync. Enterprise Intelligence Platforms.</p>
       </footer>
     </div>
   );

@@ -6,7 +6,7 @@ const Protected = () => {
     let { employee, isLoading } = useSelector((state) => state.auth)
 
     if (isLoading) {
-        return <h1>Loadin...</h1>
+        return <h1>Loading...</h1>
     }
 
     if (!employee) {

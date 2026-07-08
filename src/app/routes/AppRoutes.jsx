@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
 import AuthLayout from '../layouts/AuthLayout'
 import Login from '../../features/auth/ui/pages/Login'
 import Register from '../../features/auth/ui/pages/Register'
@@ -19,6 +19,10 @@ const router = createBrowserRouter([
                 path: "",
                 element: <AuthLayout />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to="/auth/login" replace />
+                    },
                     {
                         path: "login",
                         element: <Login />
@@ -41,6 +45,10 @@ const router = createBrowserRouter([
                 path: "",
                 element: <DashboardLayout />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to="/home" replace />
+                    },
                     {
                         path: "home",
                         element: <Dashboard />
