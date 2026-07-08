@@ -22,7 +22,7 @@ export let employeeNavigation = [
     icon: <List />,
   },
   {
-    path: "/home/chat",
+    path: "/home/chats",
     title: "Chats",
     icon: <ChartArea />,
   },
@@ -37,7 +37,7 @@ export let employeeNavigation = [
     icon: <UserPen />,
   },
   {
-    path: "/home/setting",
+    path: "/home/settings",
     title: "Settings",
     icon: <Settings />,
   },
@@ -50,12 +50,12 @@ export let adminNavigation = [
     icon: <LayoutDashboard />,
   },
   {
-    path: "/home/task",
-    title: "Task",
+    path: "/home/tasks",
+    title: "Tasks",
     icon: <List />,
   },
   {
-    path: "/home/chat",
+    path: "/home/chats",
     title: "Chats",
     icon: <ChartArea />,
   },
@@ -75,7 +75,7 @@ export let adminNavigation = [
     icon: <File />,
   },
   {
-    path: "/home/setting",
+    path: "/home/settings",
     title: "Settings",
     icon: <Settings />,
   },

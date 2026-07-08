@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux'
 import { currentLoggedEmployee } from '../../features/auth/state/auth/authAction'
 import Public from '../layouts/protectedRoutes/Public'
 import Protected from '../layouts/protectedRoutes/Protected'
+import { commonRoutes } from './commonRoutes'
 
 const router = createBrowserRouter([
     {
@@ -38,22 +39,13 @@ const router = createBrowserRouter([
     },
 
     {
-        path: "/",
+        path: "/home",
         element: <Protected />,
         children: [
             {
                 path: "",
                 element: <DashboardLayout />,
-                children: [
-                    {
-                        index: true,
-                        element: <Navigate to="/home" replace />
-                    },
-                    {
-                        path: "home",
-                        element: <Dashboard />
-                    }
-                ]
+                children: commonRoutes
             }
         ]
     }
