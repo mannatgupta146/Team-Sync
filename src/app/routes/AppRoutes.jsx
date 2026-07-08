@@ -12,6 +12,9 @@ import Protected from '../layouts/protectedRoutes/Protected'
 import { commonRoutes } from './commonRoutes'
 import { adminRoutes } from './adminRoutes'
 import { employeeRoutes } from './employeeRoutes'
+import RoleBasedRoute from '../layouts/protectedRoutes/RoleBasedRoute'
+import Unauthorized from '../../features/auth/ui/pages/Unauthorized'
+import NotFound from '../../features/auth/ui/pages/NotFound'
 
 const router = createBrowserRouter([
     {
@@ -49,11 +52,25 @@ const router = createBrowserRouter([
                 element: <DashboardLayout />,
                 children: [
                     ...commonRoutes,
-                    ...adminRoutes,
-                    ...employeeRoutes
+                    {
+                        element: <RoleBasedRoute allowedRoles={"admin"} />,
+                        children: adminRoutes
+                    },
+                    {
+                        element: <RoleBasedRoute allowedRoles={"employee"} />,
+                        children: employeeRoutes
+                    }
                 ]
             }
         ]
+    },
+    {
+        path: "/unauthorized",
+        element: <Unauthorized />
+    },
+    {
+        path: "*",
+        element: <NotFound />
     }
 ])
 
