@@ -33,6 +33,11 @@
   
     /* RADIUS */
     --radius-md: 10px;
+
+    /* ACTIVE NAV */
+    --active-nav-text: #CAB8F9;
+    --active-nav-border: #CAB8F9;
+    --active-nav-bg: rgba(202, 184, 249, 0.08);
   }
   
   /* =========================
@@ -65,6 +70,11 @@
   
     /* SHADOW */
     --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+
+    /* ACTIVE NAV */
+    --active-nav-text: #6063EE;
+    --active-nav-border: #6063EE;
+    --active-nav-bg: rgba(96, 99, 238, 0.08);
   }
   
   /* =========================
