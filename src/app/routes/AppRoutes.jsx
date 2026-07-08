@@ -7,9 +7,51 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../../features/dashboard/ui/pages/Dashboard'
 import { useDispatch } from 'react-redux'
 import { currentLoggedEmployee } from '../../features/auth/state/auth/authAction'
+import Public from '../layouts/protectedRoutes/Public'
+import Protected from '../layouts/protectedRoutes/Protected'
+
+const router = createBrowserRouter([
+    {
+        path: "/auth",      
+        element: <Public />,
+        children: [
+            {
+                path: "",
+                element: <AuthLayout />,
+                children: [
+                    {
+                        path: "login",
+                        element: <Login />
+
+                    },
+                    {
+                        path: "register",
+                        element: <Register />
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        path: "/",
+        element: <Protected />,
+        children: [
+            {
+                path: "",
+                element: <DashboardLayout />,
+                children: [
+                    {
+                        path: "home",
+                        element: <Dashboard />
+                    }
+                ]
+            }
+        ]
+    }
+])
 
 const AppRoutes = () => {
-
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -17,35 +59,6 @@ const AppRoutes = () => {
         dispatch(currentLoggedEmployee())
       })()
     }, [])
-    
-
-    let router = createBrowserRouter([
-        {
-            path: "/auth",
-            element: <AuthLayout />,
-            children: [
-                {
-                    path: "login",
-                    element: <Login />
-                },
-                {
-                    path: "register",
-                    element: <Register />
-                }
-            ]
-        },
-
-        {
-            path: "/",
-            element: <DashboardLayout />,
-            children: [
-                {
-                    path: "home",
-                    element: <Dashboard />
-                }
-            ]
-        }
-    ])
 
     return <RouterProvider router={router} />
 }
