@@ -1,9 +1,9 @@
 import React from "react";
-import { Mail, Lock, Sparkles, ShieldCheck } from "lucide-react";
+import { Mail, Lock, Sparkles, ShieldCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
-  let { register, handleSubmit, onLoginSubmit, errors, navigate } = useAuth();
+  let { register, handleSubmit, onLoginSubmit, errors, navigate, isLoading } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#09070F] text-white flex flex-col">
@@ -93,7 +93,8 @@ const Login = () => {
                 </div>
 
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-2">
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
                     {errors.email.message}
                   </p>
                 )}
@@ -128,7 +129,8 @@ const Login = () => {
                 </div>
 
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-2">
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
                     {errors.password.message}
                   </p>
                 )}
@@ -148,9 +150,17 @@ const Login = () => {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full h-16 rounded-xl bg-gradient-to-r from-purple-600 to-purple-300 text-black font-semibold text-lg hover:opacity-90 transition"
+                disabled={isLoading}
+                className="w-full h-16 rounded-xl bg-gradient-to-r from-purple-600 to-purple-300 text-black font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
 
               {/* Divider */}

@@ -1,9 +1,9 @@
 import React from "react";
-import { User, Mail, Lock, Sparkles, ShieldCheck } from "lucide-react";
+import { User, Mail, Lock, Sparkles, ShieldCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const Register = () => {
-  let { register, handleSubmit, onRegisterSubmit, errors, navigate, watch } =
+  let { register, handleSubmit, onRegisterSubmit, errors, navigate, watch, isLoading } =
     useAuth();
 
   const passwordVal = watch("password", "");
@@ -117,7 +117,8 @@ const Register = () => {
                 </div>
 
                 {errors.fullname && (
-                  <p className="text-red-400 text-sm mt-2">
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
                     {errors.fullname.message}
                   </p>
                 )}
@@ -143,7 +144,8 @@ const Register = () => {
                 </div>
 
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-2">
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
                     {errors.email.message}
                   </p>
                 )}
@@ -185,41 +187,59 @@ const Register = () => {
                 )}
 
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-2">
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
               {/* Checkbox */}
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  className="mt-1 w-5 h-5 rounded border border-white/20 bg-transparent accent-purple-500"
-                  {...register("terms", {
-                    required: true,
-                  })}
-                />
+              <div>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    className="mt-1 w-5 h-5 rounded border border-white/20 bg-transparent accent-purple-500 animate-pulse-once"
+                    {...register("terms", {
+                      required: "You must agree to the Terms of Service and Privacy Policy",
+                    })}
+                  />
 
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  I agree to the{" "}
-                  <span className="text-purple-300 cursor-pointer">
-                    Terms of Service
-                  </span>{" "}
-                  and{" "}
-                  <span className="text-purple-300 cursor-pointer">
-                    Privacy Policy
-                  </span>
-                  .
-                </p>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    I agree to the{" "}
+                    <span className="text-purple-300 cursor-pointer">
+                      Terms of Service
+                    </span>{" "}
+                    and{" "}
+                    <span className="text-purple-300 cursor-pointer">
+                      Privacy Policy
+                    </span>
+                    .
+                  </p>
+                </div>
+
+                {errors.terms && (
+                  <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-pulse-once">
+                    <AlertCircle size={14} />
+                    {errors.terms.message}
+                  </p>
+                )}
               </div>
 
-              {/* Submit */}
+               {/* Submit */}
               <button
                 type="submit"
-                className="w-full h-16 rounded-xl bg-gradient-to-r from-purple-600 to-purple-300 text-black font-semibold text-lg hover:opacity-90 transition"
+                disabled={isLoading}
+                className="w-full h-16 rounded-xl bg-gradient-to-r from-purple-600 to-purple-300 text-black font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Create Account
+                {isLoading ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </button>
 
               {/* Divider */}

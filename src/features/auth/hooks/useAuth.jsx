@@ -1,32 +1,59 @@
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { loginEmployee } from "../state/auth/authAction";
+import { loginEmployee, registerEmployee } from "../state/auth/authAction";
+import { toast } from "react-hot-toast";
 
 export let useAuth = () => {
   let dispatch = useDispatch();
   let navigate = useNavigate();
+  const { isLoading } = useSelector((state) => state.auth);
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
+    setError,
     formState: { errors },
   } = useForm();
 
-  const onRegisterSubmit = (data) => {
-    console.log(data);
+  const onRegisterSubmit = async (data) => {
+    try {
+      await dispatch(registerEmployee(data)).unwrap();
+      toast.success("Account created successfully!", { id: "auth-toast" });
+      reset();
+      navigate("/");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      toast.error(error || "Registration failed. Please try again.", { id: "auth-toast" });
+      setError("root", {
+        type: "manual",
+        message: error || "Registration failed. Please try again."
+      });
+    }
   };
 
-  const onLoginSubmit = (data) => {
-    dispatch(loginEmployee(data));
+  const onLoginSubmit = async (data) => {
+    try {
+      await dispatch(loginEmployee(data)).unwrap();
+      toast.success("Welcome back!", { id: "auth-toast" });
+      reset();
+      navigate("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast.error(error || "Login failed. Please try again.", { id: "auth-toast" });
+    }
   };
 
   return {
     register,
     handleSubmit,
     watch,
+    reset,
+    setError,
     errors,
+    isLoading,
     onRegisterSubmit,
     onLoginSubmit,
     navigate,
