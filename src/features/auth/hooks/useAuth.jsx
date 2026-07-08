@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { loginEmployee, registerEmployee } from "../state/auth/authAction";
+import { removeEmployee } from "../state/auth/authSlice";
 import { toast } from "react-hot-toast";
 
 export let useAuth = () => {
@@ -46,6 +47,12 @@ export let useAuth = () => {
     }
   };
 
+  const onLogout = () => {
+    dispatch(removeEmployee());
+    toast.success("Logged out successfully!", { id: "auth-toast" });
+    navigate("/auth/login");
+  };
+
   return {
     register,
     handleSubmit,
@@ -56,6 +63,7 @@ export let useAuth = () => {
     isLoading,
     onRegisterSubmit,
     onLoginSubmit,
+    onLogout,
     navigate,
   };
 };

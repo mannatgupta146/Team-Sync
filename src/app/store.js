@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/state/auth/authSlice"
 import themeReducer from "../shared/state/themeSlice";
+import searchReducer from "../shared/state/searchSlice";
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
-        theme: themeReducer
+        theme: themeReducer,
+        search: searchReducer
     }
 })

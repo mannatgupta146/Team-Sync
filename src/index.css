@@ -100,6 +100,6 @@ input:-webkit-autofill:active {
 
 /* Ensure caret (cursor) is always white for all inputs on dark background */
 input {
-  caret-color: #ffffff;
+  caret-color: var(--text-primary);
 }
 
