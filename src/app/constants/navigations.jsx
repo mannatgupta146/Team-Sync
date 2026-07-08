@@ -1,6 +1,6 @@
 import {
   Building,
-  ChartArea,
+  MessageSquare,
   File,
   LayoutDashboard,
   List,
@@ -24,7 +24,7 @@ export let employeeNavigation = [
   {
     path: "/home/chats",
     title: "Chats",
-    icon: <ChartArea />,
+    icon: <MessageSquare />,
   },
   {
     path: "/home/attendance",
@@ -57,7 +57,7 @@ export let adminNavigation = [
   {
     path: "/home/chats",
     title: "Chats",
-    icon: <ChartArea />,
+    icon: <MessageSquare />,
   },
   {
     path: "/home/department",
