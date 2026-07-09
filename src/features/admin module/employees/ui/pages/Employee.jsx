@@ -7,6 +7,9 @@ const Employee = () => {
   const limit = 20
   const { data, isPending, error, createEmployee, isCreating, updateEmployee, deleteEmployee } = useEmployees()
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedDepartment, setSelectedDepartment] = useState('')
+  const [selectedRole, setSelectedRole] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingEmployee, setEditingEmployee] = useState(null)
@@ -57,7 +60,6 @@ const Employee = () => {
     )
   }
 
-  console.log("EMPLOYEES DATA:", data)
 
   // Calculate dynamic stats
   const employeesArray = data.employees || (Array.isArray(data) ? data : [])
@@ -72,15 +74,26 @@ const Employee = () => {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
   const newHiresCount = employeesArray.filter(e => e.createdAt && new Date(e.createdAt) >= thirtyDaysAgo).length
 
-  // Filter employees based on search query
+  // Filter employees based on search query and predefined filters
   const filteredEmployees = employeesArray.filter(e => {
     const query = searchQuery.toLowerCase()
-    return (
+    const matchesSearch = !searchQuery || (
       e.name?.toLowerCase().includes(query) ||
       e.email?.toLowerCase().includes(query) ||
       e.department?.toLowerCase().includes(query) ||
       e.role?.toLowerCase().includes(query)
     )
+
+    const matchesDepartment = !selectedDepartment || 
+      e.department?.toLowerCase().trim() === selectedDepartment.toLowerCase().trim()
+
+    const matchesRole = !selectedRole || 
+      e.role?.toLowerCase().trim() === selectedRole.toLowerCase().trim()
+
+    const matchesStatus = !selectedStatus || 
+      e.status?.toLowerCase().trim() === selectedStatus.toLowerCase().trim()
+
+    return matchesSearch && matchesDepartment && matchesRole && matchesStatus
   })
 
   // Calculate dynamic pagination totals based on active listing (filtered list)
@@ -311,24 +324,92 @@ const Employee = () => {
       </div>
 
       {/* Actions and Search Filter bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="relative w-full sm:max-w-md">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
-          <input
-            type="text"
-            placeholder="Search by name, email, department, or role..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value)
-              setCurrentPage(1)
-            }}
-            className="w-full h-10 pl-10 pr-4 rounded-lg border border-(--border-color) bg-(--bg-surface) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-xs"
-          />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:max-w-4xl">
+          {/* Search bar */}
+          <div className="relative flex-1">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
+            <input
+              type="text"
+              placeholder="Search by name, email..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="w-full h-10 pl-10 pr-4 rounded-lg border border-(--border-color) bg-(--bg-surface) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-xs"
+            />
+          </div>
+
+          {/* Quick Filters */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Department Filter */}
+            <select
+              value={selectedDepartment}
+              onChange={(e) => {
+                setSelectedDepartment(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="h-10 px-3 rounded-lg border border-(--border-color) bg-(--bg-surface) text-(--text-primary) text-xs outline-none focus:border-(--active-nav-text) transition-colors cursor-pointer"
+            >
+              <option value="">All Departments</option>
+              {uniqueDepsArray.map(dep => (
+                <option key={dep} value={dep}>
+                  {dep.charAt(0).toUpperCase() + dep.slice(1)}
+                </option>
+              ))}
+            </select>
+
+            {/* Role Filter */}
+            <select
+              value={selectedRole}
+              onChange={(e) => {
+                setSelectedRole(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="h-10 px-3 rounded-lg border border-(--border-color) bg-(--bg-surface) text-(--text-primary) text-xs outline-none focus:border-(--active-nav-text) transition-colors cursor-pointer"
+            >
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="employee">Employee</option>
+            </select>
+
+            {/* Status Filter */}
+            <select
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="h-10 px-3 rounded-lg border border-(--border-color) bg-(--bg-surface) text-(--text-primary) text-xs outline-none focus:border-(--active-nav-text) transition-colors cursor-pointer"
+            >
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+
+            {/* Clear Filters */}
+            {(selectedDepartment || selectedRole || selectedStatus || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSelectedDepartment('')
+                  setSelectedRole('')
+                  setSelectedStatus('')
+                  setSearchQuery('')
+                  setCurrentPage(1)
+                }}
+                className="h-10 px-3 rounded-lg border border-red-500/25 hover:border-red-500/50 text-red-500 hover:bg-red-500/5 font-semibold text-xs transition flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <X size={14} />
+                <span>Clear</span>
+              </button>
+            )}
+          </div>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="h-10 px-4 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+          className="h-10 px-4 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus size={16} />
           <span>Add Employee</span>
