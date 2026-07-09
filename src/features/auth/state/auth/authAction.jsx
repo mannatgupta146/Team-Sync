@@ -3,8 +3,8 @@ import { axiosInstance } from "../../../../config/axiosInstance";
 
 export const registerEmployee = createAsyncThunk("auth/register", async (userData, thunkAPI) => {
     try {
-        const { fullname, email, password } = userData;
-        const payload = { name: fullname, email, password };
+        const { fullname, email, password, role } = userData;
+        const payload = { name: fullname, email, password, role };
         const res = await axiosInstance.post("/auth/register", payload);
         return res.data.data;
     } catch (error) {
