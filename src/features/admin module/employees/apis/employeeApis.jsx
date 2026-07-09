@@ -42,7 +42,7 @@ export const createEmployee = async (employeeData) => {
 
 export const updateEmployee = async (id, updateData) => {
     try {
-        const res = await axiosInstance.put(`/employee/${id}`, updateData)
+        const res = await axiosInstance.patch(`/employee/update/${id}`, updateData)
         return res.data
     } catch (error) {
         console.log("Error in update employee ", error)
@@ -52,7 +52,7 @@ export const updateEmployee = async (id, updateData) => {
 
 export const deleteEmployee = async (id) => {
     try {
-        const res = await axiosInstance.delete(`/employee/${id}`)
+        const res = await axiosInstance.delete(`/employee/delete/${id}`)
         return res.data
     } catch (error) {
         console.log("Error in delete employee ", error)
