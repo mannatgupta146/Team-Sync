@@ -1,8 +1,8 @@
 import { axiosInstance } from "../../../../config/axiosInstance";
 
-export const getAllEmployees = async() => {
+export const getAllEmployees = async () => {
     try {
-        const res = await axiosInstance.get("/employee?limit=200")
+        const res = await axiosInstance.get("/employee?limit=1000")
         return res.data.data
     } catch (error) {
         console.log("Error in all employee ", error)
@@ -10,7 +10,7 @@ export const getAllEmployees = async() => {
     }
 }
 
-export const createEmployee = async(employeeData) => {
+export const createEmployee = async (employeeData) => {
     const payload = {
         name: employeeData.name,
         email: employeeData.email,
@@ -38,4 +38,24 @@ export const createEmployee = async(employeeData) => {
     }
 
     return response.json();
+}
+
+export const updateEmployee = async (id, updateData) => {
+    try {
+        const res = await axiosInstance.put(`/employee/${id}`, updateData)
+        return res.data
+    } catch (error) {
+        console.log("Error in update employee ", error)
+        throw error
+    }
+}
+
+export const deleteEmployee = async (id) => {
+    try {
+        const res = await axiosInstance.delete(`/employee/${id}`)
+        return res.data
+    } catch (error) {
+        console.log("Error in delete employee ", error)
+        throw error
+    }
 }
