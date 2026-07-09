@@ -16,7 +16,11 @@ const TopNav = () => {
   const getGreeting = () => {
     const hours = new Date().getHours();
     const name = employee?.name || employee?.fullname || "";
-    const greetingBase = hours < 12 ? "Good morning" : hours < 18 ? "Good afternoon" : "Good evening";
+    const greetingBase = (hours >= 4 && hours < 12) 
+      ? "Good morning" 
+      : (hours >= 12 && hours < 17) 
+        ? "Good afternoon" 
+        : "Good evening";
     return name ? `${greetingBase}, ${name}` : `${greetingBase}!`;
   };
 
