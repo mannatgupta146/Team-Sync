@@ -1,10 +1,19 @@
 import React, { useState } from 'react'
 import useEmployees from '../../hooks/useEmployees'
-import { User, Mail, Briefcase, Calendar, Shield, Users, Activity, UserPlus, Search } from 'lucide-react'
+import { User, Mail, Briefcase, Calendar, Shield, Users, Activity, UserPlus, Search, Plus, X } from 'lucide-react'
 
 const Employee = () => {
-  const { data, isPending, error } = useEmployees()
+  const { data, isPending, error, createEmployee, isCreating } = useEmployees()
   const [searchQuery, setSearchQuery] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    department: 'common',
+    role: 'employee',
+    status: 'active'
+  })
 
   if (isPending) {
     return (
@@ -36,8 +45,9 @@ const Employee = () => {
 
   // Calculate dynamic stats
   const totalEmployees = data.employees.length
-  const uniqueDeps = new Set(data.employees.map(e => e.department?.toLowerCase() || 'common'))
+  const uniqueDeps = new Set(data.employees.map(e => e.department?.toLowerCase()?.trim() || 'common'))
   const totalDepartments = uniqueDeps.size
+  const uniqueDepsArray = Array.from(uniqueDeps)
   const activeCount = data.employees.filter(e => e.status === 'active').length
 
   const thirtyDaysAgo = new Date()
@@ -55,14 +65,39 @@ const Employee = () => {
     )
   })
 
+  // Safe date parser to normalize cross-browser and timezone offsets
+  const safeParseDate = (dateStr) => {
+    if (!dateStr) return null
+    let normalized = dateStr.toString().trim()
+    if (normalized.includes(' ') && !normalized.includes('T')) {
+      normalized = normalized.replace(' ', 'T')
+    }
+    if (!normalized.includes('Z') && !normalized.includes('+') && !normalized.includes('-')) {
+      normalized = normalized + 'Z'
+    }
+    const date = new Date(normalized)
+    return isNaN(date.getTime()) ? null : date
+  }
+
   // Format date helper
   const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A'
-    const date = new Date(dateStr)
+    const date = safeParseDate(dateStr)
+    if (!date) return 'N/A'
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+    })
+  }
+
+  // Format time helper (uses 12-hour format with AM/PM for user locale)
+  const formatTime = (dateStr) => {
+    const date = safeParseDate(dateStr)
+    if (!date) return ''
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     })
   }
 
@@ -81,6 +116,40 @@ const Employee = () => {
   const getAvatarStyle = () => {
     return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/50'
   }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      await createEmployee(formData)
+      setIsModalOpen(false)
+      // reset form
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        department: 'common',
+        role: 'employee',
+        status: 'active'
+      })
+    } catch (err) {
+      // Handled by toast in useEmployees hook
+    }
+  }
+
+  // Sort employees: newest first (based on createdAt)
+  const sortedEmployees = [...filteredEmployees].sort((a, b) => {
+    const dateA = safeParseDate(a.createdAt)
+    const dateB = safeParseDate(b.createdAt)
+    if (!dateA && !dateB) return 0
+    if (!dateA) return 1
+    if (!dateB) return -1
+    return dateB.getTime() - dateA.getTime()
+  })
 
   return (
     <div className="space-y-8">
@@ -162,10 +231,18 @@ const Employee = () => {
             className="w-full h-12 pl-12 pr-4 rounded-xl border border-(--border-color) bg-(--bg-surface) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-sm"
           />
         </div>
+
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="h-12 px-6 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-base transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <Plus size={18} />
+          <span>Add Employee</span>
+        </button>
       </div>
 
       {/* Row-Based Employees Directory Table */}
-      {filteredEmployees.length === 0 ? (
+      {sortedEmployees.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-(--border-color) bg-(--bg-surface) text-(--text-muted)">
           <Search size={40} className="mx-auto mb-4 text-(--text-muted)/30" />
           <h3 className="text-xl font-bold mb-1">No matching results</h3>
@@ -184,10 +261,10 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border-color) text-lg text-(--text-secondary)">
-              {filteredEmployees.map((elem, idx) => {
+              {sortedEmployees.map((elem, idx) => {
                 const initials = getInitials(elem.name)
                 const joinDate = formatDate(elem.createdAt)
-                const joinTime = elem.createdAt ? new Date(elem.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+                const joinTime = formatTime(elem.createdAt)
                 const isAdmin = elem.role === 'admin'
                 const isActive = elem.status === 'active'
                 const avatarStyle = getAvatarStyle()
@@ -258,6 +335,157 @@ const Employee = () => {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Add Employee Form Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-300">
+          <div className="w-full max-w-lg bg-(--bg-surface) border border-(--border-color) rounded-2xl p-8 shadow-2xl relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-(--text-muted) hover:text-(--text-primary) rounded-lg hover:bg-(--bg-hover) transition-colors cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-(--text-primary)">Add New Employee</h2>
+              <p className="text-sm text-(--text-muted) mt-1">
+                Enter details to register a new employee in the company database.
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              {/* Name */}
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-sm"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="john@company.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-sm"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors placeholder:text-(--text-muted) text-sm"
+                />
+              </div>
+
+              {/* Row: Department & Role */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                    Department
+                  </label>
+                  <select
+                    name="department"
+                    value={formData.department}
+                    onChange={handleInputChange}
+                    className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors text-sm capitalize"
+                  >
+                    {uniqueDepsArray.map(dep => (
+                      <option key={dep} value={dep}>
+                        {dep}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                    Role
+                  </label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors text-sm"
+                  >
+                    <option value="employee">Employee</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-(--text-secondary)">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  className="w-full h-12 px-4 rounded-xl border border-(--border-color) bg-(--bg-main) text-(--text-primary) outline-none focus:border-(--active-nav-text) transition-colors text-sm"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 h-12 rounded-xl border border-(--border-color) bg-transparent text-(--text-primary) font-bold text-sm hover:bg-(--bg-hover) transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreating}
+                  className="flex-1 h-12 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isCreating ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Adding...</span>
+                    </>
+                  ) : (
+                    <span>Add Employee</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
