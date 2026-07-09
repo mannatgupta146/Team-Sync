@@ -175,7 +175,7 @@ const Employee = () => {
         <div className="overflow-x-auto rounded-2xl border border-(--border-color) bg-(--bg-surface)">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
-              <tr className="border-b border-(--border-color) bg-(--bg-hover)/20 text-(--text-muted) text-sm font-bold uppercase tracking-wider">
+              <tr className="border-b border-(--border-color) bg-(--bg-hover)/20 text-(--text-muted) text-base font-extrabold uppercase tracking-wider">
                 <th className="px-6 py-4">Profile</th>
                 <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Department</th>
@@ -183,7 +183,7 @@ const Employee = () => {
                 <th className="px-6 py-4">Time of Join</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-(--border-color) text-base text-(--text-secondary)">
+            <tbody className="divide-y divide-(--border-color) text-lg text-(--text-secondary)">
               {filteredEmployees.map((elem, idx) => {
                 const initials = getInitials(elem.name)
                 const joinDate = formatDate(elem.createdAt)
@@ -201,47 +201,47 @@ const Employee = () => {
                           <img 
                             src={elem.avatar} 
                             alt={elem.name} 
-                            className="w-12 h-12 rounded-full object-cover border border-(--border-color)"
+                            className="w-14 h-14 rounded-full object-cover border border-(--border-color)"
                           />
                         ) : (
-                          <div className={`w-12 h-12 rounded-full ${avatarStyle} flex items-center justify-center font-bold text-base shadow-xs`}>
+                          <div className={`w-14 h-14 rounded-full ${avatarStyle} flex items-center justify-center font-bold text-lg shadow-xs`}>
                             {initials}
                           </div>
                         )}
                         <div>
-                          <div className="font-bold text-base text-(--text-primary) group-hover:text-(--active-nav-text) transition-colors">{elem.name}</div>
-                          <div className="text-sm text-(--text-muted) mt-0.5">{elem.email}</div>
+                          <div className="font-extrabold text-lg text-(--text-primary) group-hover:text-(--active-nav-text) transition-colors">{elem.name}</div>
+                          <div className="text-base text-(--text-muted) mt-0.5">{elem.email}</div>
                         </div>
                       </div>
                     </td>
 
                     {/* Role badge */}
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider border ${
                         isAdmin 
                           ? 'bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-300' 
                           : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-300'
                       }`}>
-                        {isAdmin ? <Shield size={10} /> : <User size={10} />}
+                        {isAdmin ? <Shield size={12} /> : <User size={12} />}
                         {elem.role || 'employee'}
                       </span>
                     </td>
 
                     {/* Department */}
                     <td className="px-6 py-4">
-                      <span className="capitalize px-3 py-1.5 rounded-lg bg-(--bg-hover) text-(--text-primary) border border-(--border-color) text-sm font-medium">
+                      <span className="capitalize px-3.5 py-2 rounded-lg bg-(--bg-hover) text-(--text-primary) border border-(--border-color) text-base font-semibold">
                         {elem.department || 'Common'}
                       </span>
                     </td>
 
                     {/* Status */}
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold border ${
+                      <span className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-base font-bold border ${
                         isActive 
                           ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
                           : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                        <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
                         <span className="capitalize">{elem.status || 'Active'}</span>
                       </span>
                     </td>
@@ -249,8 +249,8 @@ const Employee = () => {
                     {/* Join date/time */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-base text-(--text-primary) font-semibold">{joinDate}</span>
-                        <span className="text-sm text-(--text-muted) mt-0.5">{joinTime}</span>
+                        <span className="text-lg text-(--text-primary) font-bold">{joinDate}</span>
+                        <span className="text-base text-(--text-muted) mt-0.5">{joinTime}</span>
                       </div>
                     </td>
                   </tr>
