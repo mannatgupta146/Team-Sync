@@ -16,8 +16,8 @@ const DashboardLayout = () => {
   }, [mode]);
 
   return (
-    <div className="h-screen grid grid-cols-[260px_1fr] bg-[var(--bg-main)]">
-      <div className="border-r border-white/5 bg-[var(--bg-surface)]">
+    <div className="h-screen grid grid-cols-[260px_1fr] bg-(--bg-main)">
+      <div className="border-r border-white/5 bg-(--bg-surface)">
         <AsideNav />
       </div>
       <div className="flex flex-col gap-6 px-8 py-6 overflow-auto">
